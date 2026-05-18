@@ -117,7 +117,7 @@ export default function App() {
         </Card>
 
         {/* Supported conversions — desktop only */}
-        <div className="hidden sm:flex mt-6 flex-wrap items-center justify-center gap-2">
+        <div className="hidden md:flex mt-6 flex-wrap items-center justify-center gap-2">
           {SUPPORTED.map((s) => (
             <Badge key={s.from + s.to} variant="outline" className="gap-1">
               {s.from}

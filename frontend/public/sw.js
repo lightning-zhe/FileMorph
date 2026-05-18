@@ -1,9 +1,17 @@
+// FileMorph SW v2
 const SHARE_KEY = '/pending-share';
+
+self.addEventListener('install', () => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(self.clients.claim());
+});
 
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 
-  // Intercept share target POST — store file, redirect to app
   if (e.request.method === 'POST' && url.pathname === '/share') {
     e.respondWith(
       (async () => {
@@ -19,7 +27,6 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Serve the stored shared file
   if (url.pathname === SHARE_KEY) {
     e.respondWith(
       (async () => {

@@ -1,0 +1,22 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Uploads & outputs
+uploads/
+outputs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+node_modules/
+frontend/dist/
+
+# System
+.DS_Store
+Thumbs.db
+.vercel

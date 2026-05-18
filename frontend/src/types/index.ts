@@ -1,0 +1,22 @@
+export type SourceFormat = 'docx' | 'pptx' | 'pdf';
+
+export type TargetFormat = 'pdf' | 'docx' | 'png';
+
+export interface PageFile {
+  page: number;
+  filename: string;
+  download_url: string;
+}
+
+export interface ConversionResult {
+  result_type: 'single_file' | 'multiple_images';
+  source_format: SourceFormat;
+  target_format: TargetFormat;
+  download_url: string;
+  original_filename: string;
+  output_extension: string;
+  files: PageFile[];
+  zip_url: string | null;
+}
+
+export type ConversionStatus = 'idle' | 'converting' | 'success' | 'error';

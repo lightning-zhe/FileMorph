@@ -30,10 +30,8 @@ def _find_libreoffice() -> str:
 LIBREOFFICE_PATH = _find_libreoffice()
 LIBREOFFICE_TIMEOUT = 120  # seconds
 
-ALLOWED_ORIGINS = os.environ.get(
-    "ALLOWED_ORIGINS",
-    "http://localhost:5173,http://localhost:3000",
-).split(",")
+_origins = os.environ.get("ALLOWED_ORIGINS", "*")
+ALLOWED_ORIGINS = _origins.split(",") if _origins != "*" else ["*"]
 
 ALLOWED_CONVERSIONS = {
     ("docx", "pdf"),

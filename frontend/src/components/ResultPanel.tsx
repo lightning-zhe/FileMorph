@@ -30,7 +30,7 @@ export default function ResultPanel({ result, onNewConversion }: Props) {
               {result.files.map((f) => (
                 <div key={f.page} className="rounded-lg border border-slate-100 overflow-hidden bg-slate-50">
                   <img
-                    src={f.download_url}
+                    src={getDownloadUrl(f.download_url)}
                     alt={`Page ${f.page}`}
                     className="w-full h-24 object-cover"
                   />

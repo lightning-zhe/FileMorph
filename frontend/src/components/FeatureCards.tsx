@@ -25,7 +25,7 @@ const features = [
 
 export default function FeatureCards() {
   return (
-    <footer className="mt-16 pb-12">
+    <footer className="hidden sm:block mt-16 pb-12">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto px-6">
         {features.map((f) => (
           <div

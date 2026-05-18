@@ -48,7 +48,7 @@ export default function UploadZone({ file, onSelect, disabled }: Props) {
       <input
         ref={inputRef}
         type="file"
-        accept=".docx,.pptx,.pdf"
+        accept=".docx,.pptx,.pdf,.png,.jpg,.jpeg"
         onChange={handleChange}
         className="hidden"
       />

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { SourceFormat, TargetFormat } from './types';
 import { detectSourceFormat } from './lib/conversions';
 import { useConverter } from './hooks/useConverter';
@@ -25,6 +25,24 @@ export default function App() {
   const [file, setFile] = useState<File | null>(null);
   const [targetFormat, setTargetFormat] = useState<TargetFormat | null>(null);
   const { status, result, error, convert, reset } = useConverter();
+
+  // Handle shared file from WeChat / other apps (Web Share Target)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('shared') !== '1') return;
+    // Clean URL
+    window.history.replaceState({}, '', '/');
+    // Fetch the file stored by service worker
+    fetch('/pending-share')
+      .then((res) => {
+        if (!res.ok) return;
+        const disposition = res.headers.get('content-disposition') || '';
+        const match = disposition.match(/filename="?(.+?)"?$/);
+        const name = match?.[1] || 'shared-file';
+        return res.blob().then((blob) => handleSelectFile(new File([blob], name)));
+      })
+      .catch(() => {});
+  }, []);
 
   const sourceFormat: SourceFormat | null = useMemo(
     () => (file ? detectSourceFormat(file.name) : null),

@@ -47,7 +47,8 @@ export default function App() {
     reset();
   };
 
-  const canConvert = file !== null && targetFormat !== null && status !== 'converting';
+  const isBusy = status === 'waking';
+  const canConvert = file !== null && targetFormat !== null && !isBusy;
   const showForm = status !== 'success';
 
   return (
@@ -62,7 +63,7 @@ export default function App() {
             <UploadZone
               file={file}
               onSelect={handleSelectFile}
-              disabled={status === 'converting'}
+              disabled={isBusy}
             />
 
             {sourceFormat && showForm && (
@@ -70,7 +71,7 @@ export default function App() {
                 sourceFormat={sourceFormat}
                 value={targetFormat}
                 onChange={setTargetFormat}
-                disabled={status === 'converting'}
+                disabled={isBusy}
               />
             )}
 
@@ -78,7 +79,7 @@ export default function App() {
               <ConvertButton
                 onClick={handleConvert}
                 disabled={!canConvert}
-                loading={status === 'converting'}
+                waking={isBusy}
               />
             )}
 

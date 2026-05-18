@@ -19,4 +19,4 @@ export interface ConversionResult {
   zip_url: string | null;
 }
 
-export type ConversionStatus = 'idle' | 'converting' | 'success' | 'error';
+export type ConversionStatus = 'idle' | 'waking' | 'converting' | 'success' | 'error';

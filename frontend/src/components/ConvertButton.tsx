@@ -4,21 +4,21 @@ import { Button } from './ui/button';
 interface Props {
   onClick: () => void;
   disabled: boolean;
-  loading: boolean;
+  waking: boolean;
 }
 
-export default function ConvertButton({ onClick, disabled, loading }: Props) {
+export default function ConvertButton({ onClick, disabled, waking }: Props) {
   return (
     <Button
       size="lg"
       className="w-full"
       onClick={onClick}
-      disabled={disabled || loading}
+      disabled={disabled || waking}
     >
-      {loading ? (
+      {waking ? (
         <>
           <Loader2 className="h-5 w-5 animate-spin" />
-          转换中...
+          正在唤醒服务器，请稍候...
         </>
       ) : (
         '开始转换'

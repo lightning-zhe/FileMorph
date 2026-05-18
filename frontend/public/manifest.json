@@ -1,0 +1,16 @@
+{
+  "name": "FileMorph - 文件格式转换",
+  "short_name": "FileMorph",
+  "description": "轻量、快速、优雅的文件格式转换工具",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -8,7 +8,7 @@ export function useConverter() {
   const [error, setError] = useState('');
 
   const convert = useCallback(async (file: File, targetFormat: string) => {
-    setStatus('converting');
+    setStatus('waking');
     setError('');
     setResult(null);
 

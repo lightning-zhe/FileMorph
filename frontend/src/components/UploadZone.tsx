@@ -94,10 +94,10 @@ export default function UploadZone({ file, files, onSelect, onSelectMultiple, di
             </div>
           </div>
           <p className="text-base font-medium text-slate-600">
-            {multiple ? '选择多张图片，或拖拽到这里' : '拖拽文件到这里，或点击选择'}
+            拖拽文件到这里，或点击选择
           </p>
           <p className="text-sm text-slate-400">
-            {multiple ? '支持 PNG、JPG、JPEG、WEBP' : '支持 DOCX、PPTX、PDF · 最大 50MB'}
+            支持 DOCX、PPTX、PDF、PNG、JPG · 最大 50MB
           </p>
         </div>
       )}

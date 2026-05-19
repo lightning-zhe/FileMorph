@@ -88,15 +88,27 @@ function truncName(name: string, max = 20): string {
   return name.slice(0, Math.max(3, max - ext.length - 1)) + '…' + ext;
 }
 
+const isMobile = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0;
+
 function SaveFileBtn({ url, filename, label }: { url: string; filename: string; label?: string }) {
   const [busy, setBusy] = useState(false);
   const handle = async () => { setBusy(true); await shareFile(url, filename); setBusy(false); };
+  const href = getDownloadUrl(url) + '?name=' + encodeURIComponent(filename);
+  const cls = 'w-full h-14 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white font-semibold text-[15px] shadow-lg shadow-slate-900/20 hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 overflow-hidden';
+
+  // Desktop: direct download link
+  if (!isMobile) {
+    return (
+      <a href={href} download className={cls}>
+        <Download className="h-5 w-5 shrink-0" />
+        <span className="truncate">{label || '下载'}</span>
+      </a>
+    );
+  }
+
+  // Mobile: share sheet
   return (
-    <button
-      onClick={handle}
-      disabled={busy}
-      className="w-full h-14 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white font-semibold text-[15px] shadow-lg shadow-slate-900/20 hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 overflow-hidden"
-    >
+    <button onClick={handle} disabled={busy} className={cls}>
       {busy ? <Loader2 className="h-5 w-5 animate-spin shrink-0" /> : <Share2 className="h-5 w-5 shrink-0" />}
       <span className="truncate">{label || '保存'}</span>
     </button>
@@ -153,7 +165,7 @@ export default function ResultPanel({ result, onNewConversion }: Props) {
       {/* Single file — save via share sheet */}
       {!isMulti && (
         <div className="animate-fade-slide-up stagger-1">
-          <SaveFileBtn url={result.download_url} filename={downloadName} label={`保存 ${truncName(downloadName)}`} />
+          <SaveFileBtn url={result.download_url} filename={downloadName} label={`${isMobile ? '保存' : '下载'} ${truncName(downloadName)}`} />
         </div>
       )}
 

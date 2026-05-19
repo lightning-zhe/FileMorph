@@ -6,6 +6,7 @@ from fastapi.responses import FileResponse
 
 from config import ALLOWED_CONVERSIONS, MAX_FILE_SIZE, OUTPUT_DIR, UPLOAD_DIR
 from services.converter import convert
+from services.images_to_pdf import images_to_pdf
 from utils.file_utils import safe_filename
 from utils.validators import detect_format
 
@@ -120,6 +121,46 @@ def _image_response(common: dict, base_name: str, final_path: Path) -> dict:
         "download_url": f"/api/download/{final_path.name}",
         "files": sorted(files, key=lambda f: f["page"]),
         "zip_url": zip_url,
+    }
+
+
+@router.post("/api/convert/images-to-pdf")
+async def convert_images_to_pdf(files: list[UploadFile] = File(...)):
+    if not files:
+        raise HTTPException(status_code=400, detail="No files provided")
+
+    total = 0
+    image_data = []
+    for f in files:
+        content = await f.read()
+        if not content:
+            continue
+        total += len(content)
+        image_data.append((content, f.filename or "image"))
+
+    if total > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Total file size exceeds {MAX_FILE_SIZE // (1024 * 1024)}MB limit",
+        )
+
+    if not image_data:
+        raise HTTPException(status_code=400, detail="No valid image files")
+
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    output_name = f"{uuid.uuid4().hex}.pdf"
+    output_path = OUTPUT_DIR / output_name
+
+    try:
+        images_to_pdf(image_data, output_path)
+    except Exception as e:
+        output_path.unlink(missing_ok=True)
+        raise HTTPException(status_code=500, detail=f"Image to PDF conversion failed: {e}")
+
+    return {
+        "result_type": "single_file",
+        "download_url": f"/api/download/{output_name}",
+        "output_extension": "pdf",
     }
 
 

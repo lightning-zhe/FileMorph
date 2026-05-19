@@ -40,19 +40,51 @@ async function shareFile(url: string, filename: string) {
   }
 }
 
-function ShareButton({ url, filename }: { url: string; filename: string }) {
-  const [sharing, setSharing] = useState(false);
-  const handle = async () => { setSharing(true); await shareFile(url, filename); setSharing(false); };
+function ShareBtn({ url, filename, label }: { url: string; filename: string; label: string }) {
+  const [busy, setBusy] = useState(false);
+  const handle = async () => { setBusy(true); await shareFile(url, filename); setBusy(false); };
   if (typeof navigator === 'undefined' || !navigator.share) return null;
 
   return (
     <button
       onClick={handle}
-      disabled={sharing}
-      className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm text-sm font-medium text-slate-600 shadow-sm hover:bg-slate-50 active:scale-[0.97] transition-all duration-150 shrink-0"
+      disabled={busy}
+      className="inline-flex items-center gap-1 h-7 px-2 rounded-lg border border-slate-200 bg-white text-[11px] font-medium text-slate-600 hover:bg-slate-50 active:scale-95 transition-all shrink-0"
     >
-      {sharing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Share2 className="h-3.5 w-3.5" />}
-      转发
+      {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Share2 className="h-3 w-3" />}
+      {label}
+    </button>
+  );
+}
+
+async function getAllFiles(files: { download_url: string; filename: string }[]) {
+  const blobs = await Promise.all(
+    files.map(async (f) => {
+      const fullUrl = getDownloadUrl(f.download_url) + '?name=' + encodeURIComponent(f.filename);
+      const res = await fetch(fullUrl);
+      return { blob: await res.blob(), name: f.filename };
+    }),
+  );
+  return blobs.map((b) => new File([b.blob], b.name, { type: 'image/png' }));
+}
+
+function SaveAllBtn({ files }: { files: { download_url: string; filename: string }[] }) {
+  const [busy, setBusy] = useState(false);
+  const handle = async () => {
+    setBusy(true);
+    try { await navigator.share({ files: await getAllFiles(files) }); } catch {}
+    setBusy(false);
+  };
+  if (typeof navigator === 'undefined' || !navigator.share) return null;
+
+  return (
+    <button
+      onClick={handle}
+      disabled={busy}
+      className="w-full sm:flex-1 max-w-xs sm:max-w-none mx-auto sm:mx-0 h-14 rounded-xl bg-indigo-50 border border-indigo-200 text-[15px] font-semibold text-indigo-600 hover:bg-indigo-100 active:scale-95 transition-all inline-flex items-center justify-center gap-2"
+    >
+      {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Download className="h-5 w-5" />}
+      保存/转发全部
     </button>
   );
 }
@@ -96,12 +128,11 @@ export default function ResultPanel({ result, onNewConversion }: Props) {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {result.files.map((f) => (
                 <div key={f.page} className="rounded-xl border border-slate-100 overflow-hidden bg-slate-50">
-                  <img src={getDownloadUrl(f.download_url)} alt={`Page ${f.page}`} className="w-full h-20 object-cover" />
-                  <div className="px-2 py-1.5 flex items-center justify-between">
-                    <span className="text-[11px] text-slate-500 font-medium">第 {f.page} 页</span>
-                    <div className="flex items-center gap-1">
-                      <ShareButton url={f.download_url} filename={f.filename} />
-                      <a href={getDownloadUrl(f.download_url) + '?name=' + encodeURIComponent(f.filename)} download className="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium">下载</a>
+                  <img src={getDownloadUrl(f.download_url)} alt={`第 ${f.page} 页`} className="w-full h-28 object-cover" />
+                  <div className="p-2 space-y-2">
+                    <span className="block text-[11px] text-slate-500 font-medium text-center">第 {f.page} 页</span>
+                    <div className="flex items-center justify-center">
+                      <ShareBtn url={f.download_url} filename={f.filename} label="保存/转发" />
                     </div>
                   </div>
                 </div>
@@ -110,8 +141,14 @@ export default function ResultPanel({ result, onNewConversion }: Props) {
 
             {result.zip_url && (
               <div className="mt-3 flex flex-col sm:flex-row gap-2">
-                <DownloadBtn url={result.zip_url} name="下载全部 ZIP" variant="ghost" />
-                <ShareButton url={result.zip_url} filename={downloadName.replace(/\.[^.]+$/, '.zip')} />
+                <SaveAllBtn files={result.files} />
+                {/* ZIP only on desktop as fallback */}
+                <a href={getDownloadUrl(result.zip_url) + '?name=' + encodeURIComponent(downloadName.replace(/\.[^.]+$/, '.zip'))} download className="hidden sm:block">
+                  <button className="h-14 px-5 rounded-xl border border-slate-200 bg-white/80 text-sm font-medium text-slate-500 hover:bg-slate-50 shadow-sm inline-flex items-center justify-center gap-1.5">
+                    <Package className="h-4 w-4" />
+                    下载 ZIP
+                  </button>
+                </a>
               </div>
             )}
           </div>
@@ -123,7 +160,7 @@ export default function ResultPanel({ result, onNewConversion }: Props) {
         <div className="animate-fade-slide-up stagger-1">
           <div className="flex flex-col sm:flex-row gap-2">
             <DownloadBtn url={result.download_url} name={downloadName} variant="primary" />
-            <ShareButton url={result.download_url} filename={downloadName} />
+            <ShareBtn url={result.download_url} filename={downloadName} label="转发" />
           </div>
         </div>
       )}

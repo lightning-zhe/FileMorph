@@ -32,6 +32,26 @@ export async function convertFile(file: File, targetFormat: string) {
   return res.json();
 }
 
+export async function imagesToPdf(files: File[]) {
+  const formData = new FormData();
+  for (const f of files) {
+    formData.append('files', f);
+  }
+
+  const res = await fetchWithRetry(
+    `${API_BASE}/api/convert/images-to-pdf`,
+    { method: 'POST', body: formData },
+  );
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: 'Unknown error' }));
+    const message = typeof body.detail === 'string' ? body.detail : JSON.stringify(body.detail);
+    throw new Error(message);
+  }
+
+  return res.json();
+}
+
 export function getDownloadUrl(path: string): string {
   if (path.startsWith('http')) return path;
   return `${API_BASE}${path}`;

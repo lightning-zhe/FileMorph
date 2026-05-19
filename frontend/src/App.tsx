@@ -1,14 +1,16 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import type { SourceFormat, TargetFormat } from './types';
 import { detectSourceFormat } from './lib/conversions';
 import { useConverter } from './hooks/useConverter';
+import { imagesToPdf } from './lib/api';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import UploadZone from './components/UploadZone';
 import FormatSelector from './components/FormatSelector';
 import ConvertButton from './components/ConvertButton';
 import ResultPanel from './components/ResultPanel';
+import ImagePreviewGrid from './components/ImagePreviewGrid';
 import { cn } from './lib/utils';
 import { ArrowRight } from 'lucide-react';
 
@@ -18,6 +20,7 @@ const SUPPORTED = [
   { from: 'PDF', to: 'PNG', trigger: 'pdf' },
   { from: 'PPTX', to: 'PDF', trigger: 'pptx' },
   { from: 'PPTX', to: 'PNG', trigger: 'pptx' },
+  { from: '图片', to: 'PDF', trigger: 'image' },
 ];
 
 const fadeUp = {
@@ -27,8 +30,14 @@ const fadeUp = {
 
 export default function App() {
   const [file, setFile] = useState<File | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [targetFormat, setTargetFormat] = useState<TargetFormat | null>(null);
   const { status, result, error, convert, reset } = useConverter();
+  const [imageStatus, setImageStatus] = useState<'idle' | 'waking' | 'success' | 'error'>('idle');
+  const [imageResult, setImageResult] = useState<any>(null);
+  const [imageError, setImageError] = useState('');
+
+  const isImageMode = imageFiles.length > 0;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -46,28 +55,98 @@ export default function App() {
   }, []);
 
   const sourceFormat: SourceFormat | null = useMemo(
-    () => (file ? detectSourceFormat(file.name) : null),
-    [file],
+    () => isImageMode ? 'image' : (file ? detectSourceFormat(file.name) : null),
+    [file, isImageMode],
   );
 
-  const handleSelectFile = (f: File) => { setFile(f); setTargetFormat(null); reset(); };
-  const handleConvert = () => { if (file && targetFormat) convert(file, targetFormat); };
-  const handleReset = () => { setTargetFormat(null); reset(); };
+  const handleSelectFile = (f: File) => {
+    setFile(f);
+    setImageFiles([]);
+    setTargetFormat(null);
+    reset();
+    resetImages();
+  };
+
+  const handleSelectMultiple = (fs: File[]) => {
+    if (fs.length === 0) return;
+    setImageFiles(fs);
+    setFile(null);
+    setTargetFormat('image-pdf' as TargetFormat);
+    reset();
+    resetImages();
+  };
+
+  const handleRemoveImage = (i: number) => {
+    const next = imageFiles.filter((_, idx) => idx !== i);
+    if (next.length === 0) { resetAll(); return; }
+    setImageFiles(next);
+  };
+
+  const handleConvert = () => {
+    if ((!file && !isImageMode) || !targetFormat) return;
+    if (isImageMode) {
+      convertImages();
+    } else {
+      convert(file!, targetFormat);
+    }
+  };
+
+  const convertImages = useCallback(async () => {
+    setImageStatus('waking');
+    setImageError('');
+    setImageResult(null);
+    try {
+      const data = await imagesToPdf(imageFiles);
+      setImageResult(data);
+      setImageStatus('success');
+    } catch (e) {
+      setImageError(e instanceof Error ? e.message : 'Conversion failed');
+      setImageStatus('error');
+    }
+  }, [imageFiles]);
+
+  const handleReset = () => {
+    if (isImageMode) {
+      resetImages();
+    } else {
+      setTargetFormat(null);
+      reset();
+    }
+  };
+
+  const resetImages = () => {
+    setImageStatus('idle');
+    setImageResult(null);
+    setImageError('');
+  };
+
+  const resetAll = () => {
+    setFile(null);
+    setImageFiles([]);
+    setTargetFormat(null);
+    reset();
+    resetImages();
+  };
 
   const handleFormatTap = (trigger: string, to: TargetFormat) => {
-    if (!file || detectSourceFormat(file.name) !== trigger) {
-      // Suggest opening the file picker
+    if (trigger === 'image') {
       const input = document.querySelector('input[type="file"]') as HTMLInputElement | null;
-      if (input) input.click();
+      if (input) { input.accept = '.png,.jpg,.jpeg,.webp'; input.multiple = true; input.click(); }
+      return;
+    }
+    if (!file || detectSourceFormat(file.name) !== trigger) {
+      const input = document.querySelector('input[type="file"]') as HTMLInputElement | null;
+      if (input) { input.accept = '.docx,.pptx,.pdf,.png,.jpg,.jpeg'; input.multiple = false; input.click(); }
       return;
     }
     setTargetFormat(to);
   };
 
-  const isBusy = status === 'waking';
-  const canConvert = file !== null && targetFormat !== null && !isBusy;
-  const showForm = status !== 'success';
-  const step = file ? (targetFormat ? (status === 'success' ? 3 : 2) : 1) : 0;
+  const isBusy = status === 'waking' || imageStatus === 'waking';
+  const hasSource = isImageMode || file !== null;
+  const canConvert = hasSource && targetFormat !== null && !isBusy;
+  const showForm = (status !== 'success' && imageStatus !== 'success');
+  const step = hasSource ? (targetFormat ? ((status === 'success' || imageStatus === 'success') ? 3 : 2) : 1) : 0;
 
   return (
     <div className="min-h-dvh bg-slate-50">
@@ -84,29 +163,76 @@ export default function App() {
           transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
           className="rounded-[28px] border border-white/60 bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-200/50 p-5 sm:p-6 space-y-5"
         >
-          <UploadZone file={file} onSelect={handleSelectFile} disabled={isBusy} />
+          <UploadZone
+            file={file}
+            files={imageFiles}
+            onSelect={handleSelectFile}
+            onSelectMultiple={handleSelectMultiple}
+            disabled={isBusy}
+            multiple={false}
+          />
 
-          {sourceFormat && showForm && (
-            <FormatSelector sourceFormat={sourceFormat} value={targetFormat} onChange={setTargetFormat} disabled={isBusy} />
+          {/* Image mode: preview grid */}
+          {isImageMode && (
+            <ImagePreviewGrid files={imageFiles} onRemove={handleRemoveImage} />
           )}
 
-          {sourceFormat && targetFormat && showForm && (
-            <ConvertButton onClick={handleConvert} disabled={!canConvert} waking={isBusy} />
+          {/* Image mode: auto-set target, show convert button */}
+          {isImageMode && showForm && (
+            <ConvertButton onClick={handleConvert} disabled={!canConvert} waking={imageStatus === 'waking'} />
           )}
 
-          {status === 'error' && (
+          {/* Image mode: error */}
+          {imageStatus === 'error' && (
             <motion.div {...fadeUp} className="rounded-2xl border border-red-200 bg-red-50/70 px-4 py-3">
-              <p className="text-sm text-red-700">{error}</p>
-              <button onClick={reset} className="mt-2 text-sm text-red-600 underline hover:no-underline">重试</button>
+              <p className="text-sm text-red-700">{imageError}</p>
+              <button onClick={resetImages} className="mt-2 text-sm text-red-600 underline hover:no-underline">重试</button>
             </motion.div>
           )}
 
-          {status === 'success' && result && (
-            <ResultPanel result={result} onNewConversion={handleReset} />
+          {/* Image mode: success */}
+          {imageStatus === 'success' && imageResult && (
+            <ResultPanel
+              result={{
+                result_type: 'single_file',
+                source_format: 'image',
+                target_format: 'image-pdf' as any,
+                download_url: imageResult.download_url,
+                original_filename: 'images.pdf',
+                output_extension: 'pdf',
+                files: [],
+                zip_url: null,
+              }}
+              onNewConversion={resetAll}
+            />
+          )}
+
+          {/* Non-image flow — keep existing */}
+          {!isImageMode && (
+            <>
+              {sourceFormat && showForm && sourceFormat !== 'image' && (
+                <FormatSelector sourceFormat={sourceFormat} value={targetFormat} onChange={setTargetFormat} disabled={isBusy} />
+              )}
+
+              {sourceFormat && targetFormat && showForm && sourceFormat !== 'image' && (
+                <ConvertButton onClick={handleConvert} disabled={!canConvert} waking={status === 'waking'} />
+              )}
+
+              {status === 'error' && (
+                <motion.div {...fadeUp} className="rounded-2xl border border-red-200 bg-red-50/70 px-4 py-3">
+                  <p className="text-sm text-red-700">{error}</p>
+                  <button onClick={reset} className="mt-2 text-sm text-red-600 underline hover:no-underline">重试</button>
+                </motion.div>
+              )}
+
+              {status === 'success' && result && (
+                <ResultPanel result={result} onNewConversion={handleReset} />
+              )}
+            </>
           )}
         </motion.div>
 
-        {/* Format badges — interactive pills */}
+        {/* Format badges */}
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}

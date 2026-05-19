@@ -1,15 +1,18 @@
 import { useRef, useState, type DragEvent, type ChangeEvent } from 'react';
-import { Upload, FileText } from 'lucide-react';
+import { Upload, FileText, ImageIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Badge } from './ui/badge';
 
 interface Props {
   file: File | null;
+  files: File[];
   onSelect: (file: File) => void;
+  onSelectMultiple: (files: File[]) => void;
   disabled: boolean;
+  multiple: boolean;
 }
 
-export default function UploadZone({ file, onSelect, disabled }: Props) {
+export default function UploadZone({ file, files, onSelect, onSelectMultiple, disabled, multiple }: Props) {
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -22,14 +25,18 @@ export default function UploadZone({ file, onSelect, disabled }: Props) {
     e.preventDefault();
     setDragOver(false);
     if (disabled) return;
-    const f = e.dataTransfer.files[0];
-    if (f) onSelect(f);
+    const dropped = Array.from(e.dataTransfer.files);
+    if (multiple) onSelectMultiple(dropped);
+    else if (dropped[0]) onSelect(dropped[0]);
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) onSelect(f);
+    const selected = Array.from(e.target.files || []);
+    if (multiple) onSelectMultiple(selected);
+    else if (selected[0]) onSelect(selected[0]);
   };
+
+  const hasFile = multiple ? files.length > 0 : !!file;
 
   return (
     <div
@@ -48,26 +55,38 @@ export default function UploadZone({ file, onSelect, disabled }: Props) {
       <input
         ref={inputRef}
         type="file"
-        accept=".docx,.pptx,.pdf,.png,.jpg,.jpeg"
+        accept={multiple ? '.png,.jpg,.jpeg,.webp' : '.docx,.pptx,.pdf,.png,.jpg,.jpeg'}
+        multiple={multiple}
         onChange={handleChange}
         className="hidden"
       />
 
-      {file ? (
+      {hasFile ? (
         <div className="space-y-3">
-          <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-400">
-            <FileText className="h-6 w-6" />
-          </div>
-          <p className="text-base font-semibold text-slate-800 truncate px-4">{file.name}</p>
-          <div className="flex items-center justify-center gap-2">
-            <Badge variant="outline">{(file.size / 1024 / 1024).toFixed(1)} MB</Badge>
-            <Badge variant="outline">{file.name.split('.').pop()?.toUpperCase()}</Badge>
-          </div>
-          <p className="text-xs text-slate-400">点击更换文件</p>
+          {multiple ? (
+            <>
+              <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-400">
+                <ImageIcon className="h-6 w-6" />
+              </div>
+              <p className="text-base font-semibold text-slate-800">已选 {files.length} 张图片</p>
+              <p className="text-xs text-slate-400">点击更换或添加更多</p>
+            </>
+          ) : (
+            <>
+              <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-400">
+                <FileText className="h-6 w-6" />
+              </div>
+              <p className="text-base font-semibold text-slate-800 truncate px-4">{file!.name}</p>
+              <div className="flex items-center justify-center gap-2">
+                <Badge variant="outline">{(file!.size / 1024 / 1024).toFixed(1)} MB</Badge>
+                <Badge variant="outline">{file!.name.split('.').pop()?.toUpperCase()}</Badge>
+              </div>
+              <p className="text-xs text-slate-400">点击更换文件</p>
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Upload icon with glow ring */}
           <div className="relative inline-block">
             <div className="absolute inset-0 rounded-[20px] bg-indigo-400/20 blur-xl animate-pulse" />
             <div className="relative inline-flex items-center justify-center h-16 w-16 rounded-[20px] bg-gradient-to-br from-indigo-50 to-white border border-indigo-100/60 text-indigo-400 shadow-sm animate-float">
@@ -75,10 +94,10 @@ export default function UploadZone({ file, onSelect, disabled }: Props) {
             </div>
           </div>
           <p className="text-base font-medium text-slate-600">
-            拖拽文件到这里，或点击选择
+            {multiple ? '选择多张图片，或拖拽到这里' : '拖拽文件到这里，或点击选择'}
           </p>
           <p className="text-sm text-slate-400">
-            支持 DOCX、PPTX、PDF &middot; 最大 50MB
+            {multiple ? '支持 PNG、JPG、JPEG、WEBP' : '支持 DOCX、PPTX、PDF · 最大 50MB'}
           </p>
         </div>
       )}

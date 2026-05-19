@@ -34,10 +34,10 @@ export default function UploadZone({ file, onSelect, disabled }: Props) {
   return (
     <div
       className={cn(
-        'relative rounded-2xl border-2 border-dashed p-10 text-center cursor-pointer transition-all duration-200',
+        'relative rounded-[22px] border-2 border-dashed p-8 sm:p-10 text-center cursor-pointer transition-all duration-300',
         dragOver
-          ? 'border-slate-400 bg-slate-50/80 scale-[1.01]'
-          : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/40',
+          ? 'border-indigo-400 bg-indigo-50/70 scale-[1.02] shadow-lg shadow-indigo-100/50'
+          : 'border-slate-200/80 hover:border-slate-300 hover:bg-white/70 hover:shadow-md',
         disabled && 'opacity-50 pointer-events-none',
       )}
       onDragOver={handleDrag}
@@ -55,8 +55,10 @@ export default function UploadZone({ file, onSelect, disabled }: Props) {
 
       {file ? (
         <div className="space-y-3">
-          <FileText className="h-10 w-10 mx-auto text-slate-400" />
-          <p className="text-base font-semibold text-slate-800">{file.name}</p>
+          <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-400">
+            <FileText className="h-6 w-6" />
+          </div>
+          <p className="text-base font-semibold text-slate-800 truncate px-4">{file.name}</p>
           <div className="flex items-center justify-center gap-2">
             <Badge variant="outline">{(file.size / 1024 / 1024).toFixed(1)} MB</Badge>
             <Badge variant="outline">{file.name.split('.').pop()?.toUpperCase()}</Badge>
@@ -64,9 +66,13 @@ export default function UploadZone({ file, onSelect, disabled }: Props) {
           <p className="text-xs text-slate-400">点击更换文件</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-slate-100 text-slate-400">
-            <Upload className="h-7 w-7" />
+        <div className="space-y-4">
+          {/* Upload icon with glow ring */}
+          <div className="relative inline-block">
+            <div className="absolute inset-0 rounded-[20px] bg-indigo-400/20 blur-xl animate-pulse" />
+            <div className="relative inline-flex items-center justify-center h-16 w-16 rounded-[20px] bg-gradient-to-br from-indigo-50 to-white border border-indigo-100/60 text-indigo-400 shadow-sm animate-float">
+              <Upload className="h-8 w-8" />
+            </div>
           </div>
           <p className="text-base font-medium text-slate-600">
             拖拽文件到这里，或点击选择

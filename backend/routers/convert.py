@@ -94,7 +94,10 @@ def _image_response(common: dict, base_name: str, final_path: Path) -> dict:
     files = []
     zip_url = None
 
-    page_files = sorted(OUTPUT_DIR.glob(f"{base_name}_page_*.png"))
+    page_files = sorted(
+        OUTPUT_DIR.glob(f"{base_name}_page_*.png"),
+        key=lambda p: int(p.stem.rsplit("_", 1)[-1]),
+    )
     if page_files:
         zip_url = f"/api/download/{final_path.name}"
         for pf in page_files:
@@ -115,7 +118,7 @@ def _image_response(common: dict, base_name: str, final_path: Path) -> dict:
         **common,
         "result_type": "multiple_images",
         "download_url": f"/api/download/{final_path.name}",
-        "files": files,
+        "files": sorted(files, key=lambda f: f["page"]),
         "zip_url": zip_url,
     }
 

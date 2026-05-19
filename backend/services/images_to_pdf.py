@@ -1,7 +1,7 @@
 import io
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 def images_to_pdf(image_data: list[tuple[bytes, str]], output_path: Path) -> Path:
@@ -9,6 +9,7 @@ def images_to_pdf(image_data: list[tuple[bytes, str]], output_path: Path) -> Pat
     pil_images = []
     for data, _name in image_data:
         img = Image.open(io.BytesIO(data))
+        img = ImageOps.exif_transpose(img)  # Apply EXIF orientation
         # Handle transparency / palette modes
         if img.mode == 'RGBA':
             # Composite onto white background

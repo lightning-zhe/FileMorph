@@ -23,14 +23,17 @@ def images_to_pdf(image_data: list[tuple[bytes, str]], output_path: Path) -> Pat
         elif img.mode != 'RGB':
             img = img.convert('RGB')
 
-        # Scale to fit A4 (595 x 842 pts at 72 DPI), keep aspect ratio
-        a4_w, a4_h = 595, 842
-        img.thumbnail((a4_w, a4_h), Image.LANCZOS)
+        # Use portrait or landscape A4 based on image orientation
+        if img.width > img.height:
+            page_w, page_h = 842, 595  # landscape
+        else:
+            page_w, page_h = 595, 842  # portrait
 
-        # Center on A4 canvas
-        canvas = Image.new('RGB', (a4_w, a4_h), (255, 255, 255))
-        x = (a4_w - img.width) // 2
-        y = (a4_h - img.height) // 2
+        img.thumbnail((page_w, page_h), Image.LANCZOS)
+
+        canvas = Image.new('RGB', (page_w, page_h), (255, 255, 255))
+        x = (page_w - img.width) // 2
+        y = (page_h - img.height) // 2
         canvas.paste(img, (x, y))
         pil_images.append(canvas)
 

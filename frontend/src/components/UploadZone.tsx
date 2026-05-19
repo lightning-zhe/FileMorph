@@ -55,7 +55,7 @@ export default function UploadZone({ file, files, onSelect, onSelectMultiple, di
       <input
         ref={inputRef}
         type="file"
-        accept={multiple ? '.png,.jpg,.jpeg,.webp' : '.docx,.pptx,.pdf,.png,.jpg,.jpeg'}
+        accept={multiple ? '.png,.jpg,.jpeg,.webp,.docx,.pptx,.pdf' : '.docx,.pptx,.pdf,.png,.jpg,.jpeg'}
         multiple={multiple}
         onChange={handleChange}
         className="hidden"

@@ -69,6 +69,11 @@ export default function App() {
 
   const handleSelectMultiple = (fs: File[]) => {
     if (fs.length === 0) return;
+    // If single non-image file, route to document flow
+    if (fs.length === 1 && detectSourceFormat(fs[0].name) !== 'image') {
+      handleSelectFile(fs[0]);
+      return;
+    }
     setImageFiles(fs);
     setFile(null);
     setTargetFormat('image-pdf' as TargetFormat);
@@ -169,7 +174,7 @@ export default function App() {
             onSelect={handleSelectFile}
             onSelectMultiple={handleSelectMultiple}
             disabled={isBusy}
-            multiple={false}
+            multiple={!file}
           />
 
           {/* Image mode: preview grid */}

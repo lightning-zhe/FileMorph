@@ -2,15 +2,6 @@ import { useState } from 'react';
 import { Download, CheckCircle2, Package, Share2, Loader2 } from 'lucide-react';
 import type { ConversionResult } from '../types';
 import { getDownloadUrl } from '../lib/api';
-import { cn } from '../lib/utils';
-
-function truncateName(name: string, max = 16): string {
-  if (name.length <= max) return name;
-  const dot = name.lastIndexOf('.');
-  if (dot < 0) return name.slice(0, max - 1) + '…';
-  const ext = name.slice(dot);
-  return name.slice(0, Math.max(3, max - ext.length - 1)) + '…' + ext;
-}
 
 interface Props {
   result: ConversionResult;
@@ -89,22 +80,26 @@ function SaveAllBtn({ files }: { files: { download_url: string; filename: string
   );
 }
 
-function DownloadBtn({ url, name, variant }: { url: string; name: string; variant: 'primary' | 'ghost' }) {
-  const href = getDownloadUrl(url) + '?name=' + encodeURIComponent(name);
+function truncName(name: string, max = 20): string {
+  if (name.length <= max) return name;
+  const dot = name.lastIndexOf('.');
+  if (dot < 0) return name.slice(0, max - 1) + '…';
+  const ext = name.slice(dot);
+  return name.slice(0, Math.max(3, max - ext.length - 1)) + '…' + ext;
+}
+
+function SaveFileBtn({ url, filename, label }: { url: string; filename: string; label?: string }) {
+  const [busy, setBusy] = useState(false);
+  const handle = async () => { setBusy(true); await shareFile(url, filename); setBusy(false); };
   return (
-    <a href={href} download className="flex-1">
-      <button
-        className={cn(
-          'w-full h-12 rounded-2xl font-semibold text-sm transition-all duration-200 active:scale-[0.97] inline-flex items-center justify-center gap-2',
-          variant === 'primary'
-            ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white shadow-lg shadow-slate-900/20 hover:shadow-xl hover:-translate-y-0.5'
-            : 'border border-slate-200 bg-white/80 text-slate-600 hover:bg-slate-50 shadow-sm',
-        )}
-      >
-        {variant === 'primary' ? <Download className="h-4 w-4 shrink-0" /> : <Package className="h-4 w-4" />}
-        <span className="truncate">{variant === 'primary' ? `下载 ${truncateName(name)}` : name}</span>
-      </button>
-    </a>
+    <button
+      onClick={handle}
+      disabled={busy}
+      className="w-full h-14 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white font-semibold text-[15px] shadow-lg shadow-slate-900/20 hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 overflow-hidden"
+    >
+      {busy ? <Loader2 className="h-5 w-5 animate-spin shrink-0" /> : <Share2 className="h-5 w-5 shrink-0" />}
+      <span className="truncate">{label || '保存'}</span>
+    </button>
   );
 }
 
@@ -155,13 +150,10 @@ export default function ResultPanel({ result, onNewConversion }: Props) {
         </div>
       )}
 
-      {/* Single file */}
+      {/* Single file — save via share sheet */}
       {!isMulti && (
         <div className="animate-fade-slide-up stagger-1">
-          <div className="flex flex-col sm:flex-row gap-2">
-            <DownloadBtn url={result.download_url} name={downloadName} variant="primary" />
-            <ShareBtn url={result.download_url} filename={downloadName} label="转发" />
-          </div>
+          <SaveFileBtn url={result.download_url} filename={downloadName} label={`保存 ${truncName(downloadName)}`} />
         </div>
       )}
 

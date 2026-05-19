@@ -35,6 +35,7 @@ ALLOWED_ORIGINS = _origins.split(",") if _origins != "*" else ["*"]
 
 ALLOWED_CONVERSIONS = {
     ("docx", "pdf"),
+    ("docx", "html"),
     ("pptx", "pdf"),
     ("pptx", "png"),
     ("pdf", "docx"),

@@ -1,6 +1,6 @@
 export type SourceFormat = 'docx' | 'pptx' | 'pdf' | 'image';
 
-export type TargetFormat = 'pdf' | 'docx' | 'png' | 'image-pdf';
+export type TargetFormat = 'pdf' | 'docx' | 'png' | 'html' | 'image-pdf';
 
 export interface PageFile {
   page: number;

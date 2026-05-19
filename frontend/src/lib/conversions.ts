@@ -1,7 +1,7 @@
 import type { SourceFormat, TargetFormat } from '../types';
 
 export const TARGET_FORMATS: Record<SourceFormat, TargetFormat[]> = {
-  docx: ['pdf'],
+  docx: ['pdf', 'html'],
   pptx: ['pdf', 'png'],
   pdf: ['docx', 'png'],
   image: ['image-pdf'],
@@ -11,6 +11,7 @@ export const FORMAT_LABELS: Record<string, string> = {
   docx: 'DOCX (Word 文档)',
   pdf: 'PDF',
   png: 'PNG (图片)',
+  html: 'HTML (网页)',
   'image-pdf': 'PDF (图片转PDF)',
 };
 

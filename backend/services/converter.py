@@ -64,5 +64,6 @@ def convert(input_path: Path, source_format: str, target_format: str, output_pat
 import services.docx_to_pdf  # noqa: F401, E402
 import services.pptx_to_pdf  # noqa: F401, E402
 import services.pdf_to_docx  # noqa: F401, E402
+import services.docx_to_html # noqa: F401, E402
 import services.pdf_to_png   # noqa: F401, E402
 import services.pptx_to_png  # noqa: F401, E402

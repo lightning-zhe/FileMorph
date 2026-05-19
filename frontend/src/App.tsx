@@ -16,6 +16,7 @@ import { ArrowRight } from 'lucide-react';
 
 const SUPPORTED = [
   { from: 'DOCX', to: 'PDF', trigger: 'docx' },
+  { from: 'DOCX', to: 'HTML', trigger: 'docx' },
   { from: 'PDF', to: 'DOCX', trigger: 'pdf' },
   { from: 'PDF', to: 'PNG', trigger: 'pdf' },
   { from: 'PPTX', to: 'PDF', trigger: 'pptx' },

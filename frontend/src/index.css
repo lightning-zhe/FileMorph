@@ -76,3 +76,40 @@ body::before {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+
+/* Morphy mascot */
+@keyframes morphyFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.morphy-float {
+  animation: morphyFloat 3s ease-in-out infinite;
+}
+
+@keyframes morphyShadow {
+  0%, 100% { transform: translateX(-50%) scaleX(1); opacity: 0.35; }
+  50% { transform: translateX(-50%) scaleX(0.75); opacity: 0.2; }
+}
+
+.morphy-shadow {
+  animation: morphyShadow 3s ease-in-out infinite;
+}
+
+@keyframes morphyBlink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.08); }
+}
+
+.morphy-blink {
+  animation: morphyBlink 4s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+  50% { transform: translateY(-5px) scale(1.12); opacity: 0.9; }
+}
+
+.sparkle-float {
+  animation: sparkleFloat 2.6s ease-in-out infinite;
+}

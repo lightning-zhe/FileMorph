@@ -11,6 +11,7 @@ import FormatSelector from './components/FormatSelector';
 import ConvertButton from './components/ConvertButton';
 import ResultPanel from './components/ResultPanel';
 import ImagePreviewGrid from './components/ImagePreviewGrid';
+import MorphyMascot from './components/MorphyMascot';
 import { cn } from './lib/utils';
 import { ArrowRight } from 'lucide-react';
 
@@ -266,6 +267,9 @@ export default function App() {
             })}
           </div>
         </motion.div>
+
+        {/* Empty state mascot */}
+        {!hasSource && <MorphyMascot />}
 
         {/* Step indicator */}
         <motion.div

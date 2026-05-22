@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, CheckCircle2, Package, Share2, Loader2 } from 'lucide-react';
+import { Download, CheckCircle2, Share2, Loader2 } from 'lucide-react';
 import type { ConversionResult } from '../types';
 import { getDownloadUrl } from '../lib/api';
 
@@ -139,7 +139,13 @@ export default function ResultPanel({ result, onNewConversion }: Props) {
                   <div className="p-2 space-y-2">
                     <span className="block text-[11px] text-slate-500 font-medium text-center">第 {f.page} 页</span>
                     <div className="flex items-center justify-center">
-                      <ShareBtn url={f.download_url} filename={f.filename} label="保存/转发" />
+                      {isMobile ? (
+                        <ShareBtn url={f.download_url} filename={f.filename} label="保存/转发" />
+                      ) : (
+                        <a href={getDownloadUrl(f.download_url) + '?name=' + encodeURIComponent(f.filename)} download className="inline-flex items-center gap-1 h-7 px-2.5 rounded-lg border border-slate-200 bg-white text-[11px] font-medium text-slate-600 hover:bg-slate-50 active:scale-95 transition-all shrink-0">
+                          <Download className="h-3 w-3" /> 下载
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -147,15 +153,17 @@ export default function ResultPanel({ result, onNewConversion }: Props) {
             </div>
 
             {result.zip_url && (
-              <div className="mt-3 flex flex-col sm:flex-row gap-2">
-                <SaveAllBtn files={result.files} />
-                {/* ZIP only on desktop as fallback */}
-                <a href={getDownloadUrl(result.zip_url) + '?name=' + encodeURIComponent(downloadName.replace(/\.[^.]+$/, '.zip'))} download className="hidden sm:block">
-                  <button className="h-14 px-5 rounded-xl border border-slate-200 bg-white/80 text-sm font-medium text-slate-500 hover:bg-slate-50 shadow-sm inline-flex items-center justify-center gap-1.5">
-                    <Package className="h-4 w-4" />
-                    下载 ZIP
-                  </button>
-                </a>
+              <div className="mt-3">
+                {isMobile ? (
+                  <SaveAllBtn files={result.files} />
+                ) : (
+                  <a href={getDownloadUrl(result.zip_url) + '?name=' + encodeURIComponent(downloadName.replace(/\.[^.]+$/, '.zip'))} download>
+                    <button className="w-full h-14 rounded-xl bg-indigo-50 border border-indigo-200 text-[15px] font-semibold text-indigo-600 hover:bg-indigo-100 active:scale-95 transition-all inline-flex items-center justify-center gap-2">
+                      <Download className="h-5 w-5" />
+                      下载全部
+                    </button>
+                  </a>
+                )}
               </div>
             )}
           </div>

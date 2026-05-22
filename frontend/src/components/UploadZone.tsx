@@ -41,7 +41,7 @@ export default function UploadZone({ file, files, onSelect, onSelectMultiple, di
   return (
     <div
       className={cn(
-        'relative rounded-[22px] border-2 border-dashed p-8 sm:p-10 text-center cursor-pointer transition-all duration-300',
+        'relative rounded-[22px] border-2 border-dashed p-6 sm:p-8 text-center cursor-pointer transition-all duration-300',
         dragOver
           ? 'border-indigo-400 bg-indigo-50/70 scale-[1.02] shadow-lg shadow-indigo-100/50'
           : 'border-slate-200/80 hover:border-slate-300 hover:bg-white/70 hover:shadow-md',

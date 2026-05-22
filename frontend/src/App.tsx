@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { SourceFormat, TargetFormat } from './types';
 import { detectSourceFormat } from './lib/conversions';
@@ -11,7 +11,8 @@ import FormatSelector from './components/FormatSelector';
 import ConvertButton from './components/ConvertButton';
 import ResultPanel from './components/ResultPanel';
 import ImagePreviewGrid from './components/ImagePreviewGrid';
-import MorphyMascot from './components/MorphyMascot';
+import MorphCat from './components/MorphCat';
+import { BunnyWorkshop, TeddyWorkshop } from './components/AnimalFactoryDecor';
 import { cn } from './lib/utils';
 import { ArrowRight } from 'lucide-react';
 
@@ -40,6 +41,11 @@ export default function App() {
   const [imageError, setImageError] = useState('');
 
   const isImageMode = imageFiles.length > 0;
+  const formatRowRef = useRef<HTMLDivElement>(null);
+
+  const scrollFormat = (dir: 'left' | 'right') => {
+    formatRowRef.current?.scrollBy({ left: dir === 'left' ? -60 : 60, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -154,6 +160,7 @@ export default function App() {
   const canConvert = hasSource && targetFormat !== null && !isBusy;
   const showForm = (status !== 'success' && imageStatus !== 'success');
   const step = hasSource ? (targetFormat ? ((status === 'success' || imageStatus === 'success') ? 3 : 2) : 1) : 0;
+  const showCat = !targetFormat && !isBusy && status !== 'success' && imageStatus !== 'success';
 
   return (
     <div className="min-h-dvh bg-slate-50">
@@ -163,7 +170,14 @@ export default function App() {
         <HeroSection />
       </motion.div>
 
-      <main className="max-w-lg mx-auto px-5 pb-10">
+      <div className="lg:grid lg:grid-cols-[1fr_512px_1fr] lg:max-w-7xl lg:mx-auto lg:px-4">
+        {/* Bunny — desktop left */}
+        <div className="hidden lg:flex justify-center">
+          <BunnyWorkshop />
+        </div>
+
+        {/* Center main */}
+        <main className="max-w-lg mx-auto px-5 pb-10">
         {/* Main card */}
         <motion.div
           {...fadeUp}
@@ -243,39 +257,55 @@ export default function App() {
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-6 overflow-x-auto hide-scrollbar"
+          className="mt-4 relative"
         >
-          <div className="flex items-center justify-center gap-1.5 min-w-max px-2">
-            {SUPPORTED.map((s) => {
-              const isActive = sourceFormat === s.trigger && targetFormat === s.to;
-              return (
-                <button
-                  key={s.from + s.to}
-                  onClick={() => handleFormatTap(s.trigger, s.to as TargetFormat)}
-                  className={cn(
-                    'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border shadow-sm shrink-0 transition-all duration-200 active:scale-95',
-                    isActive
-                      ? 'bg-indigo-50 border-indigo-200 text-indigo-600'
-                      : 'bg-white/70 border-slate-200/70 text-slate-500 hover:border-slate-300 hover:bg-white',
-                  )}
-                >
-                  {s.from}
-                  <ArrowRight className="h-2.5 w-2.5 text-slate-300" />
-                  {s.to}
-                </button>
-              );
-            })}
+          {/* Left scroll arrow — desktop only */}
+          <button
+            onClick={() => scrollFormat('left')}
+            className="hidden md:flex absolute -left-1 top-1/2 -translate-y-1/2 z-10 w-7 h-7 items-center justify-center rounded-full bg-white/80 border border-slate-200 shadow-sm text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-all"
+          >
+            <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          {/* Right scroll arrow — desktop only */}
+          <button
+            onClick={() => scrollFormat('right')}
+            className="hidden md:flex absolute -right-1 top-1/2 -translate-y-1/2 z-10 w-7 h-7 items-center justify-center rounded-full bg-white/80 border border-slate-200 shadow-sm text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-all"
+          >
+            <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <div ref={formatRowRef} className="overflow-x-auto hide-scrollbar">
+            <div className="flex items-center justify-center gap-1.5 min-w-max px-6">
+              {SUPPORTED.map((s) => {
+                const isActive = sourceFormat === s.trigger && targetFormat === s.to;
+                return (
+                  <button
+                    key={s.from + s.to}
+                    onClick={() => handleFormatTap(s.trigger, s.to as TargetFormat)}
+                    className={cn(
+                      'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border shadow-sm shrink-0 transition-all duration-200 active:scale-95',
+                      isActive
+                        ? 'bg-indigo-50 border-indigo-200 text-indigo-600'
+                        : 'bg-white/70 border-slate-200/70 text-slate-500 hover:border-slate-300 hover:bg-white',
+                    )}
+                  >
+                    {s.from}
+                    <ArrowRight className="h-2.5 w-2.5 text-slate-300" />
+                    {s.to}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </motion.div>
 
         {/* Empty state mascot */}
-        {!hasSource && <MorphyMascot />}
+        {showCat && <MorphCat hint={hasSource && !targetFormat} />}
 
         {/* Step indicator */}
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-5 flex items-center justify-center gap-2 text-[13px] text-slate-400"
+          className="mt-4 flex items-center justify-center gap-2 text-[13px] text-slate-400"
         >
           {[
             { n: 1, label: '选文件' },
@@ -307,6 +337,12 @@ export default function App() {
           ))}
         </motion.div>
       </main>
+
+        {/* Teddy — desktop right */}
+        <div className="hidden lg:flex justify-center">
+          <TeddyWorkshop />
+        </div>
+      </div>
     </div>
   );
 }

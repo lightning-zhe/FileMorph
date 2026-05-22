@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: filemorph-api
+    env: docker
+    rootDir: backend
+    plan: free
+    healthCheckPath: /docs
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: "*"

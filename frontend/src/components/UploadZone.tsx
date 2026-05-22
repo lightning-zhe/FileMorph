@@ -55,7 +55,11 @@ export default function UploadZone({ file, files, onSelect, onSelectMultiple, di
       <input
         ref={inputRef}
         type="file"
-        accept={multiple ? '.png,.jpg,.jpeg,.webp,.docx,.pptx,.pdf' : '.docx,.pptx,.pdf,.png,.jpg,.jpeg'}
+        accept={
+          multiple
+            ? '.png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp'
+            : '.pdf,.docx,.pptx,.png,.jpg,.jpeg,.webp,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/png,image/jpeg,image/webp'
+        }
         multiple={multiple}
         onChange={handleChange}
         className="hidden"

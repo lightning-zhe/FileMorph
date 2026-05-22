@@ -143,12 +143,12 @@ export default function App() {
   const handleFormatTap = (trigger: string, to: TargetFormat) => {
     if (trigger === 'image') {
       const input = document.querySelector('input[type="file"]') as HTMLInputElement | null;
-      if (input) { input.accept = '.png,.jpg,.jpeg,.webp'; input.multiple = true; input.click(); }
+      if (input) { input.accept = '.png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp'; input.multiple = true; input.click(); }
       return;
     }
     if (!file || detectSourceFormat(file.name) !== trigger) {
       const input = document.querySelector('input[type="file"]') as HTMLInputElement | null;
-      if (input) { input.accept = '.docx,.pptx,.pdf,.png,.jpg,.jpeg'; input.multiple = false; input.click(); }
+      if (input) { input.accept = '.pdf,.docx,.pptx,.png,.jpg,.jpeg,.webp,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,image/png,image/jpeg,image/webp'; input.multiple = false; input.click(); }
       return;
     }
     setTargetFormat(to);

@@ -96,8 +96,10 @@ export default function UploadZone({ file, files, onSelect, onSelectMultiple, di
           <p className="text-base font-medium text-slate-600">
             拖拽文件到这里，或点击选择
           </p>
-          <p className="text-sm text-slate-400">
-            支持 DOCX、PPTX、PDF、PNG、JPG · 最大 50MB
+          <p className="text-sm text-slate-400 leading-relaxed">
+            支持 DOCX、PPTX、PDF、PNG、JPG
+            <br className="sm:hidden" />
+            <span className="hidden sm:inline"> · </span>最大 50MB
           </p>
         </div>
       )}

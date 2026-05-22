@@ -162,14 +162,14 @@ export default function App() {
   const showCat = !targetFormat && !isBusy && status !== 'success' && imageStatus !== 'success';
 
   return (
-    <div className="min-h-dvh bg-slate-50 flex flex-col">
+    <div className="min-h-dvh bg-slate-50 flex flex-col overflow-x-hidden">
       <Navbar />
 
       <motion.div {...fadeUp} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
         <HeroSection />
       </motion.div>
 
-      <main className="flex-1 flex flex-col items-center px-5 max-w-[720px] mx-auto">
+      <main className="flex-1 w-full flex flex-col items-center px-4 sm:px-5 max-w-[720px] mx-auto">
         {/* Main card */}
         <motion.div
           {...fadeUp}
@@ -265,8 +265,8 @@ export default function App() {
           >
             <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
-          <div ref={formatRowRef} className="overflow-x-auto hide-scrollbar">
-            <div className="flex items-center justify-center gap-1.5 min-w-max px-6">
+          <div ref={formatRowRef} className="w-full overflow-x-auto hide-scrollbar">
+            <div className="flex items-center justify-start sm:justify-center gap-1.5 min-w-max px-2 sm:px-6">
               {SUPPORTED.map((s) => {
                 const isActive = sourceFormat === s.trigger && targetFormat === s.to;
                 return (
@@ -305,7 +305,7 @@ export default function App() {
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.26, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-14 pb-6 flex items-center justify-center gap-2 text-[13px] text-slate-400"
+          className="mt-14 pb-6 flex items-center justify-center gap-1.5 sm:gap-2 text-[12px] sm:text-[13px] text-slate-400"
         >
           {[
             { n: 1, label: '选文件' },

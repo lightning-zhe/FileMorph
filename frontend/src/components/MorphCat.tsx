@@ -98,7 +98,7 @@ export default function MorphCat({ hint }: { hint?: boolean }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.26, ease: [0.16, 1, 0.3, 1] }}
-      className="mt-6 flex flex-col items-center justify-center text-center select-none"
+      className="mt-8 flex flex-col items-center justify-center text-center select-none"
     >
       {hint ? (
         <div className="flex items-center gap-3">
@@ -110,10 +110,10 @@ export default function MorphCat({ hint }: { hint?: boolean }) {
       ) : (
         <>
           {cat}
-          <p className="mt-2 text-[15px] font-medium text-slate-500">
+          <p className="mt-4 text-[15px] font-medium text-slate-500">
             把文件交给小猫，我来帮你变个格式&nbsp;✨
           </p>
-          <p className="mt-1 text-[13px] text-slate-400">
+          <p className="mt-2 text-[13px] text-slate-400">
             支持 Word、PPT、PDF、图片转换
           </p>
         </>

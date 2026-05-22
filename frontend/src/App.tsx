@@ -12,7 +12,6 @@ import ConvertButton from './components/ConvertButton';
 import ResultPanel from './components/ResultPanel';
 import ImagePreviewGrid from './components/ImagePreviewGrid';
 import MorphCat from './components/MorphCat';
-import { BunnyWorkshop, TeddyWorkshop } from './components/AnimalFactoryDecor';
 import { cn } from './lib/utils';
 import { ArrowRight } from 'lucide-react';
 
@@ -170,14 +169,7 @@ export default function App() {
         <HeroSection />
       </motion.div>
 
-      <div className="lg:grid lg:grid-cols-[1fr_512px_1fr] lg:max-w-7xl lg:mx-auto lg:px-4">
-        {/* Bunny — desktop left */}
-        <div className="hidden lg:flex justify-center">
-          <BunnyWorkshop />
-        </div>
-
-        {/* Center main */}
-        <main className="max-w-lg mx-auto px-5 pb-10">
+      <main className="max-w-lg mx-auto px-5 pb-10">
         {/* Main card */}
         <motion.div
           {...fadeUp}
@@ -337,12 +329,6 @@ export default function App() {
           ))}
         </motion.div>
       </main>
-
-        {/* Teddy — desktop right */}
-        <div className="hidden lg:flex justify-center">
-          <TeddyWorkshop />
-        </div>
-      </div>
     </div>
   );
 }

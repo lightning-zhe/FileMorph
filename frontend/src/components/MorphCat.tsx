@@ -98,7 +98,7 @@ export default function MorphCat({ hint }: { hint?: boolean }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.26, ease: [0.16, 1, 0.3, 1] }}
-      className="mt-8 flex flex-col items-center justify-center text-center select-none"
+      className="flex flex-col items-center justify-center text-center select-none"
     >
       {hint ? (
         <div className="flex items-center gap-3">

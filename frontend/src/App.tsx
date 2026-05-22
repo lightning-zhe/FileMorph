@@ -169,8 +169,7 @@ export default function App() {
         <HeroSection />
       </motion.div>
 
-      <div className="flex-1 flex flex-col justify-center">
-        <main className="max-w-lg mx-auto px-5 pb-10">
+      <main className="flex-1 flex flex-col max-w-lg mx-auto px-5">
         {/* Main card */}
         <motion.div
           {...fadeUp}
@@ -250,7 +249,7 @@ export default function App() {
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-4 relative"
+          className="mt-3 relative"
         >
           {/* Left scroll arrow — desktop only */}
           <button
@@ -291,14 +290,21 @@ export default function App() {
           </div>
         </motion.div>
 
-        {/* Empty state mascot */}
-        {showCat && <MorphCat hint={hasSource && !targetFormat} />}
+        {/* Empty state mascot — centered in remaining space */}
+        {showCat && (
+          <div className="flex-1 flex items-center justify-center">
+            <MorphCat hint={hasSource && !targetFormat} />
+          </div>
+        )}
+
+        {/* Spacer when cat is hidden but we still need some space */}
+        {!showCat && status !== 'success' && imageStatus !== 'success' && <div className="flex-1" />}
 
         {/* Step indicator */}
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-4 flex items-center justify-center gap-2 text-[13px] text-slate-400"
+          className="py-4 flex items-center justify-center gap-2 text-[13px] text-slate-400"
         >
           {[
             { n: 1, label: '选文件' },
@@ -330,7 +336,6 @@ export default function App() {
           ))}
         </motion.div>
       </main>
-      </div>
     </div>
   );
 }

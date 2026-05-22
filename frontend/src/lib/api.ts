@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE || '';
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://filemorph-api.onrender.com';
 
 async function fetchWithRetry(url: string, options: RequestInit, retries = 3, delay = 8000) {
   for (let attempt = 0; attempt <= retries; attempt++) {

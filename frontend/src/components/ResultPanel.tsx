@@ -11,20 +11,20 @@ interface Props {
 async function shareFile(url: string, filename: string) {
   const fullUrl = getDownloadUrl(url) + '?name=' + encodeURIComponent(filename);
 
-  // Try file share
+  // Try URL share first (works reliably on WeChat / Android)
   try {
-    const res = await fetch(fullUrl);
-    const blob = await res.blob();
-    const file = new File([blob], filename, { type: blob.type || 'application/octet-stream' });
-    await navigator.share({ files: [file], title: filename });
+    await navigator.share({ url: fullUrl, title: filename });
     return;
   } catch (e) {
     if (e instanceof DOMException && e.name === 'AbortError') return;
   }
 
-  // Fallback: share URL
+  // Fallback: share file blob (works on iOS)
   try {
-    await navigator.share({ url: fullUrl, title: filename });
+    const res = await fetch(fullUrl);
+    const blob = await res.blob();
+    const file = new File([blob], filename, { type: blob.type || 'application/octet-stream' });
+    await navigator.share({ files: [file], title: filename });
   } catch (e) {
     if (e instanceof DOMException && e.name === 'AbortError') return;
     await navigator.clipboard.writeText(fullUrl);

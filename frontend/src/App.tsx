@@ -174,7 +174,7 @@ export default function App() {
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-7 w-full rounded-[28px] border border-white/60 bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-200/50 p-5 space-y-4"
+          className="mt-10 w-full rounded-[28px] border border-white/60 bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-200/50 p-5 space-y-4"
         >
           <UploadZone
             file={file}

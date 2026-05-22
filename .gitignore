@@ -20,3 +20,4 @@ frontend/dist/
 .DS_Store
 Thumbs.db
 .vercel
+.claude/settings.local.json

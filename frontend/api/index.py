@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 # Add backend to Python path so its modules can be imported
-backend_dir = Path(__file__).resolve().parent.parent.parent / "backend"
+backend_dir = Path(__file__).resolve().parent / "backend"
 sys.path.insert(0, str(backend_dir))
 
 # Override storage dirs to use /tmp (only writable location in Vercel serverless)

@@ -41,7 +41,7 @@ export default function UploadZone({ file, files, onSelect, onSelectMultiple, di
   return (
     <div
       className={cn(
-        'relative rounded-[22px] border-2 border-dashed p-6 sm:p-8 text-center cursor-pointer transition-all duration-300',
+        'relative rounded-[22px] border-2 border-dashed p-5 text-center cursor-pointer transition-all duration-300',
         dragOver
           ? 'border-indigo-400 bg-indigo-50/70 scale-[1.02] shadow-lg shadow-indigo-100/50'
           : 'border-slate-200/80 hover:border-slate-300 hover:bg-white/70 hover:shadow-md',
@@ -62,19 +62,19 @@ export default function UploadZone({ file, files, onSelect, onSelectMultiple, di
       />
 
       {hasFile ? (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {multiple ? (
             <>
-              <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-400">
-                <ImageIcon className="h-6 w-6" />
+              <div className="inline-flex items-center justify-center h-10 w-10 rounded-2xl bg-indigo-50 text-indigo-400">
+                <ImageIcon className="h-5 w-5" />
               </div>
               <p className="text-base font-semibold text-slate-800">已选 {files.length} 张图片</p>
               <p className="text-xs text-slate-400">点击更换或添加更多</p>
             </>
           ) : (
             <>
-              <div className="inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-400">
-                <FileText className="h-6 w-6" />
+              <div className="inline-flex items-center justify-center h-10 w-10 rounded-2xl bg-indigo-50 text-indigo-400">
+                <FileText className="h-5 w-5" />
               </div>
               <p className="text-base font-semibold text-slate-800 truncate px-4">{file!.name}</p>
               <div className="flex items-center justify-center gap-2">
@@ -86,11 +86,11 @@ export default function UploadZone({ file, files, onSelect, onSelectMultiple, di
           )}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="relative inline-block">
             <div className="absolute inset-0 rounded-[20px] bg-indigo-400/20 blur-xl animate-pulse" />
-            <div className="relative inline-flex items-center justify-center h-16 w-16 rounded-[20px] bg-gradient-to-br from-indigo-50 to-white border border-indigo-100/60 text-indigo-400 shadow-sm animate-float">
-              <Upload className="h-8 w-8" />
+            <div className="relative inline-flex items-center justify-center h-14 w-14 rounded-[20px] bg-gradient-to-br from-indigo-50 to-white border border-indigo-100/60 text-indigo-400 shadow-sm animate-float">
+              <Upload className="h-7 w-7" />
             </div>
           </div>
           <p className="text-base font-medium text-slate-600">

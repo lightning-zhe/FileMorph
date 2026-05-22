@@ -13,7 +13,7 @@ export default function ConvertButton({ onClick, disabled, waking }: Props) {
       onClick={onClick}
       disabled={disabled || waking}
       className={cn(
-        'relative w-full h-14 rounded-2xl text-white font-semibold text-base transition-all duration-200',
+        'relative w-full h-12 rounded-2xl text-white font-semibold text-base transition-all duration-200',
         'bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950',
         'shadow-lg shadow-slate-900/20 hover:shadow-xl hover:shadow-slate-900/30 hover:-translate-y-0.5',
         'active:scale-[0.98] active:shadow-md',

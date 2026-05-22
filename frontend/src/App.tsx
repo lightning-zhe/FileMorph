@@ -169,12 +169,12 @@ export default function App() {
         <HeroSection />
       </motion.div>
 
-      <main className="flex-1 flex flex-col max-w-lg mx-auto px-5">
+      <main className="flex-1 flex flex-col items-center px-5 max-w-[720px] mx-auto">
         {/* Main card */}
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-          className="rounded-[28px] border border-white/60 bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-200/50 p-5 sm:p-6 space-y-5"
+          className="mt-7 w-full rounded-[28px] border border-white/60 bg-white/75 backdrop-blur-xl shadow-xl shadow-slate-200/50 p-5 space-y-4"
         >
           <UploadZone
             file={file}
@@ -249,7 +249,7 @@ export default function App() {
         <motion.div
           {...fadeUp}
           transition={{ duration: 0.5, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-3 relative"
+          className="mt-3 w-full relative"
         >
           {/* Left scroll arrow — desktop only */}
           <button
@@ -290,21 +290,22 @@ export default function App() {
           </div>
         </motion.div>
 
-        {/* Empty state mascot — centered in remaining space */}
+        {/* Empty state mascot */}
         {showCat && (
-          <div className="flex-1 flex items-center justify-center">
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 0.5, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-12"
+          >
             <MorphCat hint={hasSource && !targetFormat} />
-          </div>
+          </motion.div>
         )}
-
-        {/* Spacer when cat is hidden but we still need some space */}
-        {!showCat && status !== 'success' && imageStatus !== 'success' && <div className="flex-1" />}
 
         {/* Step indicator */}
         <motion.div
           {...fadeUp}
-          transition={{ duration: 0.5, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
-          className="py-4 flex items-center justify-center gap-2 text-[13px] text-slate-400"
+          transition={{ duration: 0.5, delay: 0.26, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-14 pb-6 flex items-center justify-center gap-2 text-[13px] text-slate-400"
         >
           {[
             { n: 1, label: '选文件' },

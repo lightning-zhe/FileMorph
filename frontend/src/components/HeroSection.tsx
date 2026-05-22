@@ -1,6 +1,6 @@
 export default function HeroSection() {
   return (
-    <section className="text-center pt-14 sm:pt-16 pb-4 sm:pb-5">
+    <section className="text-center pt-12 pb-2">
       <h1
         className="text-6xl sm:text-7xl font-extrabold tracking-tight leading-tight"
         style={{

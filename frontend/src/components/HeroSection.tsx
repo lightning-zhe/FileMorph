@@ -1,8 +1,8 @@
 export default function HeroSection() {
   return (
-    <section className="text-center pt-16 sm:pt-20 pb-5 sm:pb-6">
+    <section className="text-center pt-14 sm:pt-16 pb-4 sm:pb-5">
       <h1
-        className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-tight"
+        className="text-6xl sm:text-7xl font-extrabold tracking-tight leading-tight"
         style={{
           background: 'linear-gradient(135deg, #0f172a 0%, #334155 40%, #6366f1 100%)',
           WebkitBackgroundClip: 'text',

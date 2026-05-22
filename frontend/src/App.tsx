@@ -165,11 +165,11 @@ export default function App() {
     <div className="min-h-dvh bg-slate-50 flex flex-col">
       <Navbar />
 
-      <div className="flex-1 flex flex-col justify-center">
-        <motion.div {...fadeUp} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-          <HeroSection />
-        </motion.div>
+      <motion.div {...fadeUp} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
+        <HeroSection />
+      </motion.div>
 
+      <div className="flex-1 flex flex-col justify-center">
         <main className="max-w-lg mx-auto px-5 pb-10">
         {/* Main card */}
         <motion.div
